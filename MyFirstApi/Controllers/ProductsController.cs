@@ -17,7 +17,16 @@ namespace MyFirstApi.Controllers
         [HttpPost]
         public ActionResult<string> Post([FromBody] string newProduct)
         {
+            // In a real application, you would save the new product to a database
             return $"Product '{newProduct}' created successfully!";
         }
+        [HttpPut("{id}")]
+        // This method updates a product by its ID
+        public ActionResult<string> Put(int id, [FromBody] string updatedProduct)
+        {
+            // In a real application, you would update the product in the database
+            return $"Product with ID {id} updated to '{updatedProduct}' successfully!";
+        }
+
     }
 }
