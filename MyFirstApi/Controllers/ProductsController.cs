@@ -27,6 +27,13 @@ namespace MyFirstApi.Controllers
             // In a real application, you would update the product in the database
             return $"Product with ID {id} updated to '{updatedProduct}' successfully!";
         }
+        [HttpDelete("{id}")]
+        // This method deletes a product by its ID
+        public ActionResult<string> Delete(int id)
+        {
+            // In a real application, you would delete the product from the database
+            return $"Product with ID {id} deleted successfully!";
+        }
 
     }
 }
