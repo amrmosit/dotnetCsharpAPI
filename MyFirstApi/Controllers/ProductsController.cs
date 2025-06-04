@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using MyApp.Models; // Assuming you have a Models namespace for your data models
 
 namespace MyFirstApi.Controllers
 {
@@ -8,31 +9,59 @@ namespace MyFirstApi.Controllers
     // This will map to /api/products
     public class ProductsController : ControllerBase
     {
+        // In-memory product list for demo
+        private static List<Product> products = new List<Product>
+        {
+            new Product { Id = 1, Name = "Apple" },
+            new Product { Id = 2, Name = "Banana" },
+            new Product { Id = 3, Name = "Cherry" }
+        };
+
         [HttpGet]
         public ActionResult<List<string>> Get()
         {
-            return new List<string> { "Apple", "Banana", "Cherry" };
+            var productNames = new List<string>();
+            foreach (var product in products)
+            {
+                productNames.Add(product.Name);
+            }
+            return productNames;
         }
 
         [HttpPost]
-        public ActionResult<string> Post([FromBody] string newProduct)
+        public ActionResult<Product> Post([FromBody] Product newProduct)
         {
-            // In a real application, you would save the new product to a database
-            return $"Product '{newProduct}' created successfully!";
+            newProduct.Id = products.Count > 0 ? products.Max(p => p.Id) + 1 : 1;
+            products.Add(newProduct);
+            return CreatedAtAction(nameof(Get), new { id = newProduct.Id }, newProduct);
         }
         [HttpPut("{id}")]
-        // This method updates a product by its ID
-        public ActionResult<string> Put(int id, [FromBody] string updatedProduct)
+        public ActionResult<Product> Put(int id, [FromBody] Product updatedProduct)
         {
-            // In a real application, you would update the product in the database
-            return $"Product with ID {id} updated to '{updatedProduct}' successfully!";
+            var product = products.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+                return NotFound($"Product with ID {id} not found.");
+
+            product.Name = updatedProduct.Name;
+            return Ok(product);
         }
         [HttpDelete("{id}")]
-        // This method deletes a product by its ID
         public ActionResult<string> Delete(int id)
         {
-            // In a real application, you would delete the product from the database
-            return $"Product with ID {id} deleted successfully!";
+            var product = products.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+                return NotFound($"Product with ID {id} not found.");
+
+            products.Remove(product);
+            return Ok($"Product with ID {id} deleted successfully.");
+        }
+        [HttpGet("{id}")]
+        public ActionResult<Product> GetById(int id)
+        {
+            var product = products.FirstOrDefault(p => p.Id == id);
+            if (product == null)
+                return NotFound($"Product with ID {id} not found.");
+            return product;
         }
 
     }
