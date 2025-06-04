@@ -9,8 +9,15 @@ namespace MyFirstApi.Controllers
     public class ProductsController : ControllerBase
     {
         [HttpGet]
-        public ActionResult<List<string>> Get() {
-            return new List<string>{"Apple", "Banana", "Cherry"};
+        public ActionResult<List<string>> Get()
+        {
+            return new List<string> { "Apple", "Banana", "Cherry" };
+        }
+
+        [HttpPost]
+        public ActionResult<string> Post([FromBody] string newProduct)
+        {
+            return $"Product '{newProduct}' created successfully!";
         }
     }
 }
